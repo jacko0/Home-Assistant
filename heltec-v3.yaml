@@ -5,7 +5,6 @@ esphome:
     priority: -100
     then:
       - delay: 180s
-      - lambda: id(oled_display).turn_off();
 
 esp32:
   board: esp32-s3-devkitc-1
@@ -33,22 +32,9 @@ wifi:
     password: "na6BUIFDHNpn"
 
 captive_portal:
-
-i2c:
-  sda: GPIO17
-  scl: GPIO18
-  frequency: 400kHz
-  scan: true
-
 one_wire:
   - platform: gpio
     pin: GPIO4
-
-font:
-  - file: "gfonts://Roboto@700"
-    id: font_temp
-    size: 18
-
 sensor:
   - platform: dallas_temp
     name: "Flow Temperature"
@@ -62,25 +48,3 @@ sensor:
     index: 1
     update_interval: 60s
     accuracy_decimals: 1
-
-display:
-  - platform: ssd1306_i2c
-    model: "SSD1306 128x64"
-    address: 0x3C
-    reset_pin: GPIO21
-    id: oled_display
-    update_interval: 10s
-    lambda: |-
-      float flow = id(flow_temp).state;
-      if (isnan(flow)) {
-        it.printf(64, 10, id(font_temp), TextAlign::CENTER, "Flow: --.-°C");
-      } else {
-        it.printf(64, 10, id(font_temp), TextAlign::CENTER, "Flow: %.1f°C", flow);
-      }
-
-      float ret = id(return_temp).state;
-      if (isnan(ret)) {
-        it.printf(64, 38, id(font_temp), TextAlign::CENTER, "Return: --.-°C");
-      } else {
-        it.printf(64, 38, id(font_temp), TextAlign::CENTER, "Return: %.1f°C", ret);
-      }
