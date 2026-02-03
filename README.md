@@ -1,45 +1,84 @@
-# ESP32 Configurations and Device Setups
+# Jacko's Warfield Temperature Monitor
 
-The ESP32 is a powerful microcontroller with integrated Wi-Fi and Bluetooth capabilities. Here are some important configurations and setup instructions:
+ESPHome-based temperature monitoring system for heating flow and return temperatures using Dallas/DS18B20 sensors.
 
-## Prerequisites
-- Ensure you have the ESP32 development board.
-- Install the Arduino IDE or PlatformIO.
+## Hardware
 
-## Basic Setup
-1. **Connecting ESP32**: Connect your ESP32 board to your computer using a USB cable.
-2. **Installing Board Support**: In the Arduino IDE, go to `File` -> `Preferences`, and add the following URL to the `Board URL` field:
-   ```plaintext
-   https://dl.espressif.com/dl/package_esp32_index.json
-   ```
-3. **Select Board**: Navigate to `Tools` -> `Board` -> `ESP32 Arduino` and select your board model.
+- **Board**: ESP8266 (ESP-01 1M variant)
+- **Sensors**: 2x Dallas DS18B20 temperature sensors
+- **Connection**: One-wire bus on GPIO2
 
-## Wi-Fi Configuration
-To configure Wi-Fi on your ESP32, use the following code:
-```cpp
-#include <WiFi.h>
+## Features
 
-const char* ssid = "your_SSID";
-const char* password = "your_PASSWORD";
+- **Dual Temperature Monitoring**
+  - Flow temperature measurement
+  - Return temperature measurement
+  - 30-second update intervals
+  - 0.1°C precision
 
-void setup() {
-  Serial.begin(115200);
-  WiFi.begin(ssid, password);
+- **Connectivity**
+  - Primary WiFi network with fallback support
+  - Home Assistant API integration (encrypted)
+  - Built-in web server (port 80)
+  - Fallback AP mode if WiFi fails
 
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    Serial.println("Connecting to WiFi...");
-  }
-  Serial.println("Connected to WiFi");
-}
+- **Management**
+  - OTA (Over-The-Air) updates
+  - Uptime tracking
+  - Captive portal for configuration
 
-void loop() {
-  // Your code here
-}
+## Configuration
+
+### Required Secrets
+
+Create a `secrets.yaml` file in your ESPHome directory:
+
+```yaml
+warfield_ssid: "your_primary_network"
+warfield_password: "your_primary_password"
+gchq_ssid: "your_secondary_network"
+gchq_password: "your_secondary_password"
 ```
 
-## Bluetooth Setup
-To enable Bluetooth capabilities, include the following library:
-```cpp
-#include <BluetoothSerial.h>
+### WiFi Priority
+
+The device connects to networks in this order:
+1. Primary network (priority 10)
+2. Secondary network (priority 5)
+3. Fallback hotspot if both fail
+
+### Fallback Hotspot
+
+If WiFi connection fails:
+- **SSID**: Warfield Fallback Hotspot
+- **Password**: DgNoPJEvMrVK
+
+## Sensor Setup
+
+The Dallas temperature sensors are connected via one-wire protocol:
+- **Bus Pin**: GPIO2
+- **Sensor 0**: Flow Temperature
+- **Sensor 1**: Return Temperature
+
+## Installation
+
+1. Install [ESPHome](https://esphome.io/guides/getting_started_command_line.html)
+2. Create your `secrets.yaml` file
+3. Compile and upload:
+   ```bash
+   esphome run warfield.yaml
+   ```
+
+## Accessing the Device
+
+- **Home Assistant**: Auto-discovered via API
+- **Web Interface**: `http://warfield.local` (or device IP)
+- **Logs**: Use ESPHome dashboard or CLI
+
+## Security Notes
+
+⚠️ **Important**: The API encryption key and OTA password in this configuration should be regenerated for production use. Generate new credentials with:
+
+```bash
+esphome wizard warfield.yaml
 ```
