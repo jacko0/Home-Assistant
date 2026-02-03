@@ -1,4 +1,4 @@
-# Jacko's ESPHome Pi (esphome-web-00680a)
+# Jacko's ESPHome Pi (RPi-Pico-W)
 
 ESPHome configuration and documentation for a Raspberry Pi Pico W running ESPHome with:
 - BME280 (temperature/humidity/pressure) on I2C
