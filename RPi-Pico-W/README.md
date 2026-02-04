@@ -5,8 +5,6 @@ ESPHome configuration and documentation for a Raspberry Pi Pico W running ESPHom
 - SSD1306 128x64 OLED (I2C)
 - Onboard LED configured as a controllable light
 
-Config file: https://github.com/jacko0/pi/blob/4331fa0a7b97982258bc05a8a2756a25a83836e2/esphome-web-00680a.yaml
-
 ---
 
 ## Contents
