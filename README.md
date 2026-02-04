@@ -14,9 +14,6 @@ Personal configuration files and ESPHome YAML definitions for my Home Assistant 
 - **.gitignore**  
   Standard ignore patterns (including `.DS_Store`, secrets, caches).
 
-- **.gitattributes** (optional)  
-  Line-ending normalisation settings (can be safely removed if not required).
-
 ## Usage
 
 1. **ESPHome devices**  
