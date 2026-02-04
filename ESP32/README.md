@@ -126,7 +126,7 @@ logger:
 # Enable Home Assistant API
 api:
   encryption:
-    key: "aU3nSpdlXKX/O0hkIO30dNO/uQB76Y73IZjQQ12jzwc="
+    key: ""
 ```
 
 **api:** Enables the native API that allows Home Assistant to communicate with this device.
@@ -140,7 +140,7 @@ api:
 ```yaml
 ota:
   - platform: esphome
-    password: "7c0f979dd151805cc9001c6801d7c54a"
+    password: ""
 ```
 
 **ota:** OTA stands for "Over-The-Air". This allows you to update the firmware on your ESP8266 wirelessly without physically connecting a USB cable.
