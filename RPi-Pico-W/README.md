@@ -102,7 +102,7 @@ esphome run esphome-web-00680a.yaml --device /dev/ttyUSB0
 
 - View logs:
   ```
-esphome logs esphome-web-00680a.yaml
+esphome logs RPi-Pico-W.yaml
   ```
 
 - Once initially flashed with network credentials, OTA updates are available via the ESPHome dashboard or `esphome upload --device <hostname_or_ip> ...`.
