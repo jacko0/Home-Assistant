@@ -1,4 +1,3 @@
-# ESPHome configuration file for Raspberry Pi Pico W with BME280 sensor and OLED display
 esphome:
   name: esphome-web-00680a
   friendly_name: ESPHome Pi
@@ -8,88 +7,83 @@ esphome:
 rp2040:
   board: rpipicow
 
-# Enable logging
 logger:
 
-# Enable Home Assistant API
 api:
 
-# Allow Over-The-Air updates
 ota:
-  - platform: esphome
+  platform: esphome
 
 wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
+  networks:
+    - ssid: !secret warfield_ssid
+      password: !secret warfield_password
+    - ssid: !secret gchq_ssid
+      password: !secret gchq_password
 
-# Time component - gets time from internet time servers
 time:
   - platform: sntp
     id: ha_time
     timezone: Europe/London
 
-# I2C bus for BME280 and OLED
 i2c:
   sda: GPIO4
   scl: GPIO5
-  scan: false
+  scan: false   # set to true temporarily to confirm BME280 & OLED addresses
 
-# Fonts for OLED display
 font:
   - file: "gfonts://Roboto"
     id: font_small
     size: 10
 
-# OLED Display (128x64)
 display:
   - platform: ssd1306_i2c
     model: "SSD1306 128x64"
     address: 0x3C
+    update_interval: 30s
     lambda: |-
       auto now = id(ha_time).now();
-      it.strftime(0, 0, id(font_small), "%.2d:%.2d:%.2d", now);
-      it.strftime(0, 12, id(font_small), "%d/%m/%Y", now);
-      it.printf(0, 26, id(font_small), "Temp: %.1f C", id(pico_temp).state);
-      it.printf(0, 38, id(font_small), "Hum:  %.0f%%", id(pico_hum).state);
-      it.printf(0, 50, id(font_small), "Pres: %.0f hPa", id(pico_pressure).state);
-    update_interval: 30s
+      it.strftime(0, 0, id(font_small), TextAlign::TOP_LEFT, "%H:%M:%S", now);
+      it.strftime(0, 12, id(font_small), TextAlign::TOP_LEFT, "%d/%m/%Y", now);
+      it.printf(0, 26, id(font_small), TextAlign::TOP_LEFT, "Temp: %.1f °C", id(pico_temp).state);
+      it.printf(0, 38, id(font_small), TextAlign::TOP_LEFT, "Hum:  %.0f %%", id(pico_hum).state);
+      it.printf(0, 50, id(font_small), TextAlign::TOP_LEFT, "Pres: %.0f hPa", id(pico_pressure).state);
 
-# Onboard LED configuration (virtual pin 32 for Pico W)
-output:
-  - platform: gpio
-    pin: 32
-    id: onboard_led
-
-light:
-  - platform: binary
-    name: "Onboard LED"
-    id: onboard_led_light
-    output: onboard_led
-
-# BME280 sensor on I2C
 sensor:
   - platform: bme280_i2c
+    address: 0x76               # change to 0x77 if no readings appear
     temperature:
-      name: "Pico W Temperature"
       id: pico_temp
+      name: "Pico W Temperature"
     pressure:
-      name: "Pico W Pressure"
       id: pico_pressure
+      name: "Pico W Pressure"
     humidity:
-      name: "Pico W Humidity"
       id: pico_hum
-    address: 0x76
+      name: "Pico W Humidity"
     update_interval: 60s
 
-# Existing 1 Hz LED blink
 interval:
-  - interval: 1s
-    then:
-      - light.toggle: onboard_led_light
-
-# Periodic explicit logging
   - interval: 5s
     then:
       - logger.log:
           format: "Temperature: %.1f °C | Humidity: %.1f %% | Pressure: %.1f hPa"
           args: [id(pico_temp).state, id(pico_hum).state, id(pico_pressure).state]
+
+# === All LED-related code is commented out below ===
+
+#output:
+#  - platform: gpio
+#    pin: 32
+#    id: onboard_led
+
+#light:
+#  - platform: binary
+#    name: "Onboard LED"
+#    id: onboard_led_light
+#    output: onboard_led
+
+#interval:
+#  - interval: 1s
+#    then:
+#      - light.toggle: onboard_led_light
